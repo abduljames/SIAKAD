@@ -71,6 +71,25 @@
         </div>
       </div>
 
+      <div class="doc-card" style="margin-bottom:16px;">
+        <div class="doc-ttd-row">
+          <div class="doc-ttd-box">
+            <div class="peran">Wali Santri / Penerima Tagihan</div>
+            <div class="tempat-tanggal">&nbsp;</div>
+            <div class="garis"></div>
+            <div class="nama">{{ tagihan.santri?.namaWali || '(...........................)' }}</div>
+            <div class="ket">Wali dari {{ tagihan.santri?.nama }}</div>
+          </div>
+          <div class="doc-ttd-box">
+            <div class="peran">Mengetahui, Bendahara</div>
+            <div class="tempat-tanggal">{{ identitasPonpes.alamat.split(',').pop().trim() }}, {{ formatTanggal(tagihan.createdAt) }}</div>
+            <div class="garis"></div>
+            <div class="nama">(...........................)</div>
+            <div class="ket">Bendahara {{ identitasPonpes.nama }}</div>
+          </div>
+        </div>
+      </div>
+
       <div class="doc-footer">
         <h4>Jazakumullahu Khairan</h4>
         <p>Mohon segera diselesaikan sebelum tanggal jatuh tempo. Terima kasih atas perhatiannya.</p>

@@ -83,6 +83,25 @@
         <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;"><span style="color:var(--teks-sub);">Tanggal Bayar</span><span>{{ formatTanggal(pembayaran.tanggalBayar) }}</span></div>
       </div>
 
+      <div class="doc-card" style="margin-bottom:16px;">
+        <div class="doc-ttd-row">
+          <div class="doc-ttd-box">
+            <div class="peran">Dibayar oleh</div>
+            <div class="tempat-tanggal">{{ formatTanggal(pembayaran.tanggalBayar) }}</div>
+            <div class="garis"></div>
+            <div class="nama">{{ pembayaran.tagihan?.santri?.namaWali || '(...........................)' }}</div>
+            <div class="ket">Wali dari {{ pembayaran.tagihan?.santri?.nama }}</div>
+          </div>
+          <div class="doc-ttd-box">
+            <div class="peran">Diterima oleh, Bendahara</div>
+            <div class="tempat-tanggal">{{ identitasPonpes.alamat.split(',').pop().trim() }}, {{ formatTanggal(pembayaran.tanggalBayar) }}</div>
+            <div class="garis"></div>
+            <div class="nama">(...........................)</div>
+            <div class="ket">Bendahara {{ identitasPonpes.nama }}</div>
+          </div>
+        </div>
+      </div>
+
       <div class="doc-footer">
         <h4>Jazakumullahu Khairan</h4>
         <p>Semoga Allah membalas kebaikan Anda dan menjadikan pembayaran ini sebagai amal jariyah.<br />Aamiin ya Rabbal 'Alamin.</p>

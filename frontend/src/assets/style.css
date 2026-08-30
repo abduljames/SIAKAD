@@ -335,6 +335,15 @@ tbody tr:hover { background: #fafafa; }
 .summary-box .row { display: flex; justify-content: space-between; padding: 2px 0; }
 .summary-box .row .label { color: var(--teks-sub); }
 
+/* ---------- Chip picker (mis. pilih bank / e-wallet) ---------- */
+.chip-select { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-option {
+  display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px;
+  border: 1.5px solid var(--border); cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--teks-sub);
+}
+.chip-option .icon { font-size: 14px; }
+.chip-option.selected { border-color: var(--hijau-600); background: var(--hijau-50); color: var(--hijau-700); }
+
 @media (max-width: 900px) {
   .sidebar { display: none; }
   .form-layout { grid-template-columns: 1fr; }
@@ -376,6 +385,14 @@ tbody tr:hover { background: #fafafa; }
 
 .doc-footer { text-align: center; padding: 22px; color: var(--teks-sub); font-size: 12.5px; }
 .doc-footer h4 { color: var(--hijau-700); font-size: 14px; margin-bottom: 8px; }
+
+.doc-ttd-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px; }
+.doc-ttd-box { text-align: center; font-size: 12.5px; }
+.doc-ttd-box .peran { color: var(--teks-sub); margin-bottom: 4px; }
+.doc-ttd-box .tempat-tanggal { color: var(--teks-muted); font-size: 11.5px; margin-bottom: 56px; }
+.doc-ttd-box .garis { border-top: 1px solid var(--teks); width: 80%; margin: 0 auto 6px; }
+.doc-ttd-box .nama { font-weight: 700; }
+.doc-ttd-box .ket { font-size: 11px; color: var(--teks-muted); }
 
 @page {
   size: A4 portrait;

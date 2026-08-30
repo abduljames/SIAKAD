@@ -113,20 +113,30 @@
           <div class="form-group">
             <label>Metode <span class="req">*</span></label>
             <div class="pill-select-row">
-              <div class="pill-option-sm" :class="{ selected: form.metode === 'Tunai' }" @click="form.metode = 'Tunai'">
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'Tunai' }" @click="pilihMetode('Tunai')">
                 <span class="icon">💵</span><span class="name">Tunai</span>
               </div>
-              <div class="pill-option-sm" :class="{ selected: form.metode === 'Transfer Bank' }" @click="form.metode = 'Transfer Bank'">
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'Transfer Bank' }" @click="pilihMetode('Transfer Bank')">
                 <span class="icon">🏦</span><span class="name">Transfer Bank</span>
               </div>
-              <div class="pill-option-sm" :class="{ selected: form.metode === 'E-Wallet' }" @click="form.metode = 'E-Wallet'">
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'E-Wallet' }" @click="pilihMetode('E-Wallet')">
                 <span class="icon">📱</span><span class="name">E-Wallet</span>
               </div>
             </div>
           </div>
           <div class="form-group" v-if="form.metode !== 'Tunai'">
-            <label>{{ form.metode === 'Transfer Bank' ? 'Nama Bank' : 'Nama E-Wallet' }} <span class="req">*</span></label>
-            <input v-model="form.penyedia" :placeholder="form.metode === 'Transfer Bank' ? 'Contoh: BCA' : 'Contoh: OVO'" />
+            <label>{{ form.metode === 'Transfer Bank' ? 'Pilih Bank' : 'Pilih E-Wallet' }} <span class="req">*</span></label>
+            <div class="chip-select">
+              <div
+                v-for="opt in opsiPenyedia"
+                :key="opt"
+                class="chip-option"
+                :class="{ selected: form.penyedia === opt }"
+                @click="pilihPenyedia(opt)"
+              >{{ opt }}</div>
+              <div class="chip-option" :class="{ selected: penyediaLainnya }" @click="pilihPenyediaLainnya">✏️ Lainnya</div>
+            </div>
+            <input v-if="penyediaLainnya" v-model="form.penyedia" style="margin-top:8px;" placeholder="Ketik nama bank/e-wallet lain" />
           </div>
           <div class="form-group" style="margin-bottom:0;">
             <label>Catatan</label>
@@ -158,12 +168,33 @@ const periode = ref('');
 const drawerOpen = ref(false);
 const tagihanBelumLunas = ref([]);
 const form = ref({ tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', penyedia: '', catatan: '' });
+const penyediaLainnya = ref(false);
+
+const daftarBank = ['BCA', 'BRI', 'BNI', 'Mandiri', 'BSI', 'CIMB Niaga'];
+const daftarEwallet = ['OVO', 'GoPay', 'DANA', 'ShopeePay', 'LinkAja'];
+const opsiPenyedia = computed(() => (form.value.metode === 'Transfer Bank' ? daftarBank : daftarEwallet));
 
 const tagihanTerpilih = computed(() => tagihanBelumLunas.value.find((t) => t.id === form.value.tagihanId) || null);
 const sisaTagihan = computed(() => (tagihanTerpilih.value ? Number(tagihanTerpilih.value.totalTagihan) - Number(tagihanTerpilih.value.totalTerbayar) : 0));
 
 function onPilihTagihan() {
   if (tagihanTerpilih.value) form.value.jumlahBayar = sisaTagihan.value;
+}
+
+function pilihMetode(m) {
+  form.value.metode = m;
+  form.value.penyedia = '';
+  penyediaLainnya.value = false;
+}
+
+function pilihPenyedia(opt) {
+  form.value.penyedia = opt;
+  penyediaLainnya.value = false;
+}
+
+function pilihPenyediaLainnya() {
+  penyediaLainnya.value = true;
+  form.value.penyedia = '';
 }
 
 const warnaPalet = ['#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#6366f1', '#ef4444'];
@@ -194,6 +225,7 @@ async function bukaCatat() {
   const res = await api.get('/tagihan');
   tagihanBelumLunas.value = res.data.filter((t) => t.status !== 'Lunas');
   form.value = { tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', penyedia: '', catatan: '' };
+  penyediaLainnya.value = false;
   drawerOpen.value = true;
 }
 
