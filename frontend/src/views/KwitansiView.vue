@@ -33,8 +33,8 @@
       <div class="doc-grid-2">
         <div class="doc-santri-card">
           <h3>👤 Informasi Santri</h3>
-          <div style="font-size:16px;font-weight:800;">{{ pembayaran.tagihan?.santri?.nama }}</div>
-          <div style="font-size:12px;opacity:0.85;">NIS: {{ pembayaran.tagihan?.santri?.nis }} &middot; Kelas {{ pembayaran.tagihan?.santri?.kelas?.nama || '-' }}</div>
+          <div style="font-size:14px;font-weight:800;">{{ pembayaran.tagihan?.santri?.nama }}</div>
+          <div style="font-size:11px;opacity:0.85;">NIS: {{ pembayaran.tagihan?.santri?.nis }} &middot; Kelas {{ pembayaran.tagihan?.santri?.kelas?.nama || '-' }}</div>
           <div class="baris"><div><span class="label">Wali Santri</span>{{ pembayaran.tagihan?.santri?.namaWali || '-' }} &middot; {{ pembayaran.tagihan?.santri?.noHpWali || '-' }}</div></div>
         </div>
         <div class="doc-card">
