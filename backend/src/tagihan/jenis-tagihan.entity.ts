@@ -17,6 +17,11 @@ export class JenisTagihan {
   @Column()
   sifat: 'Bulanan' | 'Sekali' | 'Insidental';
 
+  // Nominal bawaan -- dipakai buat auto-isi jumlah rincian saat jenis ini
+  // dipilih di form Buat Tagihan, supaya tidak perlu ketik manual tiap kali.
+  @Column('decimal', { precision: 14, scale: 2, default: 0 })
+  nominalDefault: number;
+
   @Column({ default: 'Aktif' })
   status: 'Aktif' | 'Nonaktif';
 

@@ -9,15 +9,15 @@
     </div>
 
     <div class="nav-group-label">Data Master</div>
-    <RouterLink class="nav-link" active-class="active" to="/santri"><span class="icon">🧑‍🎓</span> Santri & Kelas</RouterLink>
+    <RouterLink class="nav-link" active-class="active" to="/santri"><span class="icon tone-biru">🧑‍🎓</span> Santri & Kelas</RouterLink>
 
     <div class="nav-group-label">Tagihan Santri</div>
-    <RouterLink class="nav-link" active-class="active" to="/jenis-tagihan"><span class="icon">🏷️</span> Jenis Tagihan</RouterLink>
-    <RouterLink class="nav-link" active-class="active" to="/tagihan"><span class="icon">🧾</span> Tagihan Santri</RouterLink>
-    <RouterLink class="nav-link" active-class="active" to="/pembayaran"><span class="icon">💳</span> Pembayaran Santri</RouterLink>
+    <RouterLink class="nav-link" active-class="active" to="/jenis-tagihan"><span class="icon tone-oranye">🏷️</span> Jenis Tagihan</RouterLink>
+    <RouterLink class="nav-link" active-class="active" to="/tagihan"><span class="icon tone-hijau">🧾</span> Tagihan Santri</RouterLink>
+    <RouterLink class="nav-link" active-class="active" to="/pembayaran"><span class="icon tone-teal">💳</span> Pembayaran Santri</RouterLink>
 
     <div class="nav-group-label">Laporan</div>
-    <RouterLink class="nav-link" active-class="active" to="/laporan"><span class="icon">📊</span> Rekap Tagihan</RouterLink>
+    <RouterLink class="nav-link" active-class="active" to="/laporan"><span class="icon tone-ungu">📊</span> Rekap Tagihan</RouterLink>
   </aside>
 </template>
 

@@ -53,7 +53,7 @@
               <tr v-for="(r, idx) in rincian" :key="idx">
                 <td>{{ idx + 1 }}</td>
                 <td style="min-width:150px;">
-                  <select v-model="r.jenisTagihanId">
+                  <select v-model="r.jenisTagihanId" @change="isiNominalDefault(r)">
                     <option value="">Pilih...</option>
                     <option v-for="jt in jenisTagihanList" :key="jt.id" :value="jt.id">{{ jt.nama }}</option>
                   </select>
@@ -112,6 +112,11 @@ function pilihSantri() {}
 
 function tambahRincian() {
   rincian.value.push({ jenisTagihanId: '', keterangan: '', jumlah: 0, diskon: 0 });
+}
+
+function isiNominalDefault(r) {
+  const jt = jenisTagihanList.value.find((x) => x.id === r.jenisTagihanId);
+  if (jt) r.jumlah = Number(jt.nominalDefault || 0);
 }
 
 async function load() {

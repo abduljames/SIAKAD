@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, ILike, Repository } from 'typeorm';
+import { DataSource, ILike, In, Repository } from 'typeorm';
 import { Tagihan } from './tagihan.entity';
 import { TagihanDetail } from './tagihan-detail.entity';
 import { JenisTagihan } from './jenis-tagihan.entity';
@@ -21,6 +21,7 @@ export class TagihanController {
   constructor(
     @InjectRepository(Tagihan) private tagihanRepo: Repository<Tagihan>,
     @InjectRepository(Santri) private santriRepo: Repository<Santri>,
+    @InjectRepository(JenisTagihan) private jenisTagihanRepo: Repository<JenisTagihan>,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
@@ -103,5 +104,88 @@ export class TagihanController {
       await manager.save(tagihan);
       return tagihan;
     });
+  }
+
+  // Buat tagihan sekaligus buat banyak santri (satu jenis tagihan yang sama,
+  // mis. "SPP Oktober" buat seluruh kelas) -- pola sama dengan bulk-create
+  // tagihan di Koperasi Digital. Dedup per santri berdasar (jenisTagihan +
+  // periode) supaya tidak dobel kalau dijalankan berkali-kali.
+  @Post('massal')
+  async buatMassal(
+    @Body()
+    body: {
+      jenisTagihanId: number;
+      periode: string;
+      jatuhTempo: string;
+      nominal: number;
+      referensi?: string;
+      santriIds?: number[];
+      kelasId?: number;
+    },
+  ) {
+    if (!body.jenisTagihanId) throw new BadRequestException('Pilih jenis tagihan terlebih dahulu.');
+    if (!body.periode || !body.jatuhTempo) throw new BadRequestException('Periode dan jatuh tempo wajib diisi.');
+    if (!body.nominal || body.nominal <= 0) throw new BadRequestException('Nominal tidak valid.');
+
+    const jenisTagihan = await this.jenisTagihanRepo.findOneBy({ id: body.jenisTagihanId });
+    if (!jenisTagihan) throw new BadRequestException('Jenis tagihan tidak ditemukan.');
+
+    let targetSantri: Santri[];
+    if (body.santriIds && body.santriIds.length > 0) {
+      targetSantri = await this.santriRepo.findBy({ id: In(body.santriIds) });
+    } else {
+      const where: any = { status: 'Aktif' };
+      if (body.kelasId) where.kelas = { id: body.kelasId };
+      targetSantri = await this.santriRepo.find({ where });
+    }
+    if (targetSantri.length === 0) throw new BadRequestException('Tidak ada santri yang dipilih.');
+
+    let dibuat = 0;
+    let dilewati = 0;
+
+    await this.dataSource.transaction(async (manager) => {
+      for (const santri of targetSantri) {
+        const sudahAda = await manager
+          .createQueryBuilder(Tagihan, 't')
+          .innerJoin('t.rincian', 'r')
+          .where('t."santriId" = :santriId', { santriId: santri.id })
+          .andWhere('t.periode = :periode', { periode: body.periode })
+          .andWhere('r."jenisTagihanId" = :jenisTagihanId', { jenisTagihanId: body.jenisTagihanId })
+          .getOne();
+        if (sudahAda) {
+          dilewati++;
+          continue;
+        }
+
+        const count = await manager.count(Tagihan);
+        const tanggalKode = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+        const noTagihan = `TAG-${tanggalKode}-${String(count + 1).padStart(4, '0')}`;
+
+        const rincian = manager.create(TagihanDetail, {
+          jenisTagihan,
+          keterangan: jenisTagihan.nama,
+          jumlah: body.nominal,
+          diskon: 0,
+          denda: 0,
+          total: body.nominal,
+        });
+
+        const tagihan = manager.create(Tagihan, {
+          noTagihan,
+          santri,
+          periode: body.periode,
+          jatuhTempo: body.jatuhTempo,
+          referensi: body.referensi,
+          rincian: [rincian],
+          totalTagihan: body.nominal,
+          totalTerbayar: 0,
+          status: 'Belum Bayar',
+        });
+        await manager.save(tagihan);
+        dibuat++;
+      }
+    });
+
+    return { dibuat, dilewati, totalSantri: targetSantri.length };
   }
 }

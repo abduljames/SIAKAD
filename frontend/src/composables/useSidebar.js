@@ -1,7 +1,10 @@
 import { ref } from 'vue';
 
 const tersimpan = localStorage.getItem('siakad_sidebar_terbuka');
-export const sidebarTerbuka = ref(tersimpan === null ? true : tersimpan === 'true');
+// Kalau belum pernah diatur user, default-nya tertutup di layar sempit
+// (hp/tablet) supaya tidak menutupi konten, terbuka di layar lebar.
+const defaultTerbuka = window.innerWidth > 900;
+export const sidebarTerbuka = ref(tersimpan === null ? defaultTerbuka : tersimpan === 'true');
 
 export function toggleSidebar() {
   sidebarTerbuka.value = !sidebarTerbuka.value;

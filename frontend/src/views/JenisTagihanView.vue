@@ -42,13 +42,14 @@
               <th>No</th>
               <th>Nama Jenis Tagihan</th>
               <th>Kode Tagihan</th>
+              <th style="text-align:right;">Nominal</th>
               <th>Sifat</th>
               <th>Status</th>
               <th style="text-align:right;">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="list.length === 0"><td colspan="6"><div class="empty-state"><div class="icon">🏷️</div>Belum ada jenis tagihan</div></td></tr>
+            <tr v-if="list.length === 0"><td colspan="7"><div class="empty-state"><div class="icon">🏷️</div>Belum ada jenis tagihan</div></td></tr>
             <tr v-for="(jt, idx) in list" :key="jt.id">
               <td>{{ idx + 1 }}</td>
               <td>
@@ -61,6 +62,7 @@
                 </div>
               </td>
               <td>{{ jt.kode }}</td>
+              <td style="text-align:right;">Rp {{ formatUang(jt.nominalDefault) }}</td>
               <td><span class="badge" :class="'badge-' + jt.sifat.toLowerCase()">{{ jt.sifat }}</span></td>
               <td><span class="badge" :class="jt.status === 'Aktif' ? 'badge-aktif' : 'badge-nonaktif'"><span class="badge-dot" :style="{ background: jt.status === 'Aktif' ? 'var(--hijau-700)' : 'var(--teks-muted)' }"></span>{{ jt.status }}</span></td>
               <td style="text-align:right;position:relative;">
@@ -94,6 +96,11 @@
           <div class="form-group">
             <label>Kode Tagihan <span class="req">*</span></label>
             <input v-model="form.kode" placeholder="Contoh: KGT" />
+          </div>
+          <div class="form-group">
+            <label>Nominal Default (Rp)</label>
+            <CurrencyInput v-model="form.nominalDefault" placeholder="Contoh: 500000" />
+            <div class="form-hint">Otomatis mengisi jumlah saat jenis ini dipilih di form Buat Tagihan.</div>
           </div>
           <div class="form-group">
             <label>Deskripsi</label>
@@ -142,8 +149,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
+import CurrencyInput from '../components/CurrencyInput.vue';
 import api from '../services/api';
 import { successDialog, errorDialog, confirmDialog, pesanError } from '../composables/useDialog';
+
+function formatUang(n) { return Number(n || 0).toLocaleString('id-ID'); }
 
 const list = ref([]);
 const total = ref(0);
@@ -172,7 +182,7 @@ const sifatOptions = [
   { value: 'Insidental', desc: 'Ditagihkan sewaktu-waktu', icon: '⚡' },
 ];
 
-const form = ref({ nama: '', kode: '', deskripsi: '', sifat: 'Bulanan', status: 'Aktif', urutan: 0 });
+const form = ref({ nama: '', kode: '', deskripsi: '', sifat: 'Bulanan', status: 'Aktif', urutan: 0, nominalDefault: 0 });
 
 async function load() {
   const res = await api.get('/jenis-tagihan', { params: { search: search.value, status: statusFilter.value } });
@@ -188,14 +198,14 @@ function reset() {
 
 function bukaTambah() {
   editing.value = null;
-  form.value = { nama: '', kode: '', deskripsi: '', sifat: 'Bulanan', status: 'Aktif', urutan: list.value.length + 1 };
+  form.value = { nama: '', kode: '', deskripsi: '', sifat: 'Bulanan', status: 'Aktif', urutan: list.value.length + 1, nominalDefault: 0 };
   drawerOpen.value = true;
   menuAksiId.value = null;
 }
 
 function bukaEdit(jt) {
   editing.value = jt;
-  form.value = { nama: jt.nama, kode: jt.kode, deskripsi: jt.deskripsi, sifat: jt.sifat, status: jt.status, urutan: jt.urutan };
+  form.value = { nama: jt.nama, kode: jt.kode, deskripsi: jt.deskripsi, sifat: jt.sifat, status: jt.status, urutan: jt.urutan, nominalDefault: jt.nominalDefault };
   drawerOpen.value = true;
   menuAksiId.value = null;
 }
