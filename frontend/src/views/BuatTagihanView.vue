@@ -80,8 +80,7 @@
         <div style="display:flex;gap:10px;justify-content:space-between;">
           <RouterLink to="/tagihan" class="btn btn-outline">✕ Batal</RouterLink>
           <div style="display:flex;gap:10px;">
-            <button class="btn btn-outline" @click="simpan(false)">💾 Simpan Draft</button>
-            <button class="btn btn-primary" @click="simpan(true)">✓ Simpan & Buat Tagihan</button>
+            <button class="btn btn-primary" @click="simpan">✓ Simpan & Buat Tagihan</button>
           </div>
         </div>
       </div>
@@ -131,6 +130,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import api from '../services/api';
+import { successDialog, errorDialog, pesanError } from '../composables/useDialog';
 
 const router = useRouter();
 const santriList = ref([]);
@@ -166,20 +166,25 @@ async function load() {
   jenisTagihanList.value = resJenis.data.data;
 }
 
-async function simpan(langsungBuat) {
-  if (!santriId.value) return alert('Pilih santri terlebih dahulu.');
-  if (!periode.value || !jatuhTempo.value) return alert('Periode dan jatuh tempo wajib diisi.');
+async function simpan() {
+  if (!santriId.value) return errorDialog('Pilih santri terlebih dahulu.');
+  if (!periode.value || !jatuhTempo.value) return errorDialog('Periode dan jatuh tempo wajib diisi.');
   const rincianValid = rincian.value.filter((r) => r.jenisTagihanId && r.jumlah > 0);
-  if (rincianValid.length === 0) return alert('Isi minimal 1 rincian tagihan dengan jenis & jumlah.');
+  if (rincianValid.length === 0) return errorDialog('Isi minimal 1 rincian tagihan dengan jenis & jumlah.');
 
-  await api.post('/tagihan', {
-    santriId: santriId.value,
-    periode: periode.value,
-    jatuhTempo: jatuhTempo.value,
-    referensi: referensi.value || catatan.value,
-    rincian: rincianValid,
-  });
-  router.push('/tagihan');
+  try {
+    await api.post('/tagihan', {
+      santriId: santriId.value,
+      periode: periode.value,
+      jatuhTempo: jatuhTempo.value,
+      referensi: referensi.value || catatan.value,
+      rincian: rincianValid,
+    });
+    await successDialog('Tagihan berhasil dibuat.');
+    router.push('/tagihan');
+  } catch (err) {
+    errorDialog(pesanError(err));
+  }
 }
 
 onMounted(load);

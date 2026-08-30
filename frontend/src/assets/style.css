@@ -309,6 +309,32 @@ tbody tr:hover { background: #fafafa; }
 .empty-state { text-align: center; padding: 48px 20px; color: var(--teks-muted); }
 .empty-state .icon { font-size: 32px; margin-bottom: 10px; }
 
+/* ---------- Small centered modal (mis. Tambah Kelas) ---------- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); z-index: 60;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-box { background: #fff; border-radius: var(--radius); width: 380px; max-width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.modal-head h3 { font-size: 15px; }
+.modal-body { padding: 18px 20px; }
+.modal-foot { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--border); }
+.modal-foot .btn { flex: 1; }
+
+/* ---------- Payment method pill selector ---------- */
+.pill-select-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pill-option-sm {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 8px;
+  border-radius: var(--radius-sm); border: 1.5px solid var(--border); cursor: pointer; text-align: center;
+}
+.pill-option-sm .icon { font-size: 18px; }
+.pill-option-sm .name { font-size: 11.5px; font-weight: 700; }
+.pill-option-sm.selected { border-color: var(--hijau-600); background: var(--hijau-50); color: var(--hijau-700); }
+
+.summary-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 12.5px; }
+.summary-box .row { display: flex; justify-content: space-between; padding: 2px 0; }
+.summary-box .row .label { color: var(--teks-sub); }
+
 @media (max-width: 900px) {
   .sidebar { display: none; }
   .form-layout { grid-template-columns: 1fr; }

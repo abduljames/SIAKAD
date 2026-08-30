@@ -86,11 +86,20 @@
         <div class="drawer-body">
           <div class="form-group">
             <label>Tagihan <span class="req">*</span></label>
-            <select v-model="form.tagihanId">
+            <select v-model="form.tagihanId" @change="onPilihTagihan">
               <option value="">Pilih tagihan...</option>
               <option v-for="t in tagihanBelumLunas" :key="t.id" :value="t.id">{{ t.noTagihan }} - {{ t.santri?.nama }} ({{ t.periode }})</option>
             </select>
           </div>
+
+          <div v-if="tagihanTerpilih" class="summary-box" style="margin-bottom:16px;">
+            <div class="row"><span class="label">Santri</span><span>{{ tagihanTerpilih.santri?.nama }} ({{ tagihanTerpilih.santri?.kelas?.nama || '-' }})</span></div>
+            <div class="row"><span class="label">Periode</span><span>{{ tagihanTerpilih.periode }}</span></div>
+            <div class="row"><span class="label">Total Tagihan</span><span>Rp {{ formatUang(tagihanTerpilih.totalTagihan) }}</span></div>
+            <div class="row"><span class="label">Sudah Terbayar</span><span>Rp {{ formatUang(tagihanTerpilih.totalTerbayar) }}</span></div>
+            <div class="row" style="font-weight:800;color:var(--hijau-700);"><span>Sisa Tagihan</span><span>Rp {{ formatUang(sisaTagihan) }}</span></div>
+          </div>
+
           <div class="form-group">
             <label>Tanggal Bayar <span class="req">*</span></label>
             <input v-model="form.tanggalBayar" type="date" />
@@ -98,22 +107,29 @@
           <div class="form-group">
             <label>Jumlah Bayar (Rp) <span class="req">*</span></label>
             <input v-model.number="form.jumlahBayar" type="number" />
+            <div v-if="tagihanTerpilih" class="form-hint">Sisa tagihan: Rp {{ formatUang(sisaTagihan) }}</div>
           </div>
           <div class="form-group">
             <label>Metode <span class="req">*</span></label>
-            <select v-model="form.metode">
-              <option value="Tunai">Tunai</option>
-              <option value="Transfer Bank">Transfer Bank</option>
-              <option value="E-Wallet">E-Wallet</option>
-            </select>
+            <div class="pill-select-row">
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'Tunai' }" @click="form.metode = 'Tunai'">
+                <span class="icon">💵</span><span class="name">Tunai</span>
+              </div>
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'Transfer Bank' }" @click="form.metode = 'Transfer Bank'">
+                <span class="icon">🏦</span><span class="name">Transfer Bank</span>
+              </div>
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'E-Wallet' }" @click="form.metode = 'E-Wallet'">
+                <span class="icon">📱</span><span class="name">E-Wallet</span>
+              </div>
+            </div>
           </div>
           <div class="form-group" v-if="form.metode !== 'Tunai'">
-            <label>Penyedia (mis. BCA / OVO)</label>
-            <input v-model="form.penyedia" />
+            <label>{{ form.metode === 'Transfer Bank' ? 'Nama Bank' : 'Nama E-Wallet' }} <span class="req">*</span></label>
+            <input v-model="form.penyedia" :placeholder="form.metode === 'Transfer Bank' ? 'Contoh: BCA' : 'Contoh: OVO'" />
           </div>
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:0;">
             <label>Catatan</label>
-            <textarea v-model="form.catatan" rows="2"></textarea>
+            <textarea v-model="form.catatan" rows="2" placeholder="Opsional"></textarea>
           </div>
         </div>
         <div class="drawer-foot">
@@ -126,9 +142,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import api from '../services/api';
+import { successDialog, errorDialog, pesanError } from '../composables/useDialog';
 
 const list = ref([]);
 const stats = ref({ totalTagihan: 0, totalTerbayar: 0, totalBelumTerbayar: 0, jumlahTunggakan: 0 });
@@ -137,6 +154,13 @@ const periode = ref('');
 const drawerOpen = ref(false);
 const tagihanBelumLunas = ref([]);
 const form = ref({ tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', penyedia: '', catatan: '' });
+
+const tagihanTerpilih = computed(() => tagihanBelumLunas.value.find((t) => t.id === form.value.tagihanId) || null);
+const sisaTagihan = computed(() => (tagihanTerpilih.value ? Number(tagihanTerpilih.value.totalTagihan) - Number(tagihanTerpilih.value.totalTerbayar) : 0));
+
+function onPilihTagihan() {
+  if (tagihanTerpilih.value) form.value.jumlahBayar = sisaTagihan.value;
+}
 
 const warnaPalet = ['#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#6366f1', '#ef4444'];
 function warnaAvatar(nama) { return warnaPalet[(nama || '').charCodeAt(0) % warnaPalet.length] || warnaPalet[0]; }
@@ -170,10 +194,20 @@ async function bukaCatat() {
 }
 
 async function simpanPembayaran() {
-  if (!form.value.tagihanId || !form.value.jumlahBayar) return alert('Lengkapi tagihan & jumlah bayar.');
-  await api.post('/pembayaran', form.value);
-  drawerOpen.value = false;
-  load();
+  if (!form.value.tagihanId || !form.value.jumlahBayar) {
+    return errorDialog('Lengkapi tagihan & jumlah bayar terlebih dahulu.');
+  }
+  if (form.value.metode !== 'Tunai' && !form.value.penyedia) {
+    return errorDialog(`${form.value.metode === 'Transfer Bank' ? 'Nama bank' : 'Nama e-wallet'} wajib diisi.`);
+  }
+  try {
+    await api.post('/pembayaran', form.value);
+    drawerOpen.value = false;
+    load();
+    successDialog('Pembayaran berhasil dicatat.');
+  } catch (err) {
+    errorDialog(pesanError(err));
+  }
 }
 
 async function exportRekap() {

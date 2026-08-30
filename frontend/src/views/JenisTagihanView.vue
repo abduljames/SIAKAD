@@ -143,6 +143,7 @@
 import { ref, onMounted } from 'vue';
 import AppLayout from '../components/AppLayout.vue';
 import api from '../services/api';
+import { successDialog, errorDialog, confirmDialog, pesanError } from '../composables/useDialog';
 
 const list = ref([]);
 const total = ref(0);
@@ -200,21 +201,34 @@ function bukaEdit(jt) {
 }
 
 async function simpan() {
-  if (!form.value.nama || !form.value.kode) return;
-  if (editing.value) {
-    await api.put(`/jenis-tagihan/${editing.value.id}`, form.value);
-  } else {
-    await api.post('/jenis-tagihan', form.value);
+  if (!form.value.nama || !form.value.kode) {
+    return errorDialog('Nama dan kode tagihan wajib diisi.');
   }
-  drawerOpen.value = false;
-  load();
+  try {
+    if (editing.value) {
+      await api.put(`/jenis-tagihan/${editing.value.id}`, form.value);
+    } else {
+      await api.post('/jenis-tagihan', form.value);
+    }
+    const pesanSukses = editing.value ? 'Jenis tagihan berhasil diperbarui.' : 'Jenis tagihan baru berhasil ditambahkan.';
+    drawerOpen.value = false;
+    load();
+    successDialog(pesanSukses);
+  } catch (err) {
+    errorDialog(pesanError(err));
+  }
 }
 
 async function hapus(jt) {
-  if (!confirm(`Hapus jenis tagihan "${jt.nama}"?`)) return;
-  await api.delete(`/jenis-tagihan/${jt.id}`);
   menuAksiId.value = null;
-  load();
+  const yakin = await confirmDialog(`Hapus jenis tagihan "${jt.nama}"? Tindakan ini tidak bisa dibatalkan.`);
+  if (!yakin) return;
+  try {
+    await api.delete(`/jenis-tagihan/${jt.id}`);
+    load();
+  } catch (err) {
+    errorDialog(pesanError(err));
+  }
 }
 
 onMounted(load);
