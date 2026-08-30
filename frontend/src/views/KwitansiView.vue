@@ -5,7 +5,7 @@
     <div v-else class="doc-page">
       <div class="doc-toolbar">
         <RouterLink to="/pembayaran" class="btn btn-outline">← Kembali</RouterLink>
-        <button class="btn btn-primary" @click="window.print()">🖨️ Cetak Kwitansi</button>
+        <button class="btn btn-primary" @click="cetak">🖨️ Cetak Kwitansi</button>
       </div>
 
       <div class="doc-header">
@@ -100,6 +100,8 @@ import { identitasPonpes } from '../utils/identitasPonpes';
 const route = useRoute();
 const pembayaran = ref(null);
 const loading = ref(true);
+
+function cetak() { window.print(); }
 
 const sisaTagihan = computed(() => {
   if (!pembayaran.value?.tagihan) return 0;

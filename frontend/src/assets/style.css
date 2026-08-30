@@ -377,9 +377,17 @@ tbody tr:hover { background: #fafafa; }
 .doc-footer { text-align: center; padding: 22px; color: var(--teks-sub); font-size: 12.5px; }
 .doc-footer h4 { color: var(--hijau-700); font-size: 14px; margin-bottom: 8px; }
 
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+
 @media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   .sidebar, .topbar, .breadcrumb, .doc-toolbar { display: none !important; }
-  .doc-shell { padding: 0; background: #fff; }
+  .doc-shell { padding: 0; background: #fff; display: block; }
+  .doc-page { max-width: none; width: 100%; }
   .content-area { padding: 0 !important; }
   body { background: #fff; }
+  .doc-header, .doc-banner, .doc-grid-2, .doc-card, .doc-santri-card { box-shadow: none; break-inside: avoid; }
 }

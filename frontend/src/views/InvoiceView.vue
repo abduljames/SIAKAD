@@ -5,7 +5,7 @@
     <div v-else class="doc-page">
       <div class="doc-toolbar">
         <RouterLink to="/tagihan" class="btn btn-outline">← Kembali</RouterLink>
-        <button class="btn btn-primary" @click="window.print()">🖨️ Cetak Invoice</button>
+        <button class="btn btn-primary" @click="cetak">🖨️ Cetak Invoice</button>
       </div>
 
       <div class="doc-header">
@@ -88,6 +88,8 @@ import { identitasPonpes } from '../utils/identitasPonpes';
 const route = useRoute();
 const tagihan = ref(null);
 const loading = ref(true);
+
+function cetak() { window.print(); }
 
 function formatUang(n) { return Number(n || 0).toLocaleString('id-ID'); }
 function formatTanggal(d) { return d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'; }
