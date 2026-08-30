@@ -51,13 +51,26 @@ export class PembayaranController {
       tagihanId: number;
       tanggalBayar: string;
       jumlahBayar: number;
-      metode: 'Tunai' | 'Transfer Bank' | 'E-Wallet';
-      penyedia?: string;
+      metode: 'Tunai' | 'Transfer';
+      jenisPengirim?: 'Bank' | 'E-Wallet';
+      penyediaPengirim?: string;
+      atasNamaPengirim?: string;
+      jenisPenerima?: 'Bank' | 'E-Wallet';
+      penyediaPenerima?: string;
+      atasNamaPenerima?: string;
       catatan?: string;
     },
   ) {
     if (!body.tagihanId) throw new BadRequestException('Pilih tagihan terlebih dahulu.');
     if (!body.jumlahBayar || body.jumlahBayar <= 0) throw new BadRequestException('Jumlah bayar tidak valid.');
+    if (body.metode === 'Transfer') {
+      if (!body.penyediaPengirim || !body.atasNamaPengirim) {
+        throw new BadRequestException('Detail pengirim (bank/e-wallet & atas nama) wajib diisi.');
+      }
+      if (!body.penyediaPenerima) {
+        throw new BadRequestException('Detail penerima (bank/e-wallet) wajib diisi.');
+      }
+    }
 
     return this.dataSource.transaction(async (manager) => {
       const tagihan = await manager.findOneBy(Tagihan, { id: body.tagihanId });
@@ -73,7 +86,12 @@ export class PembayaranController {
         tanggalBayar: body.tanggalBayar,
         jumlahBayar: body.jumlahBayar,
         metode: body.metode,
-        penyedia: body.penyedia,
+        jenisPengirim: body.metode === 'Transfer' ? body.jenisPengirim : null,
+        penyediaPengirim: body.metode === 'Transfer' ? body.penyediaPengirim : null,
+        atasNamaPengirim: body.metode === 'Transfer' ? body.atasNamaPengirim : null,
+        jenisPenerima: body.metode === 'Transfer' ? body.jenisPenerima : null,
+        penyediaPenerima: body.metode === 'Transfer' ? body.penyediaPenerima : null,
+        atasNamaPenerima: body.metode === 'Transfer' ? body.atasNamaPenerima : null,
         catatan: body.catatan,
       });
       await manager.save(pembayaran);

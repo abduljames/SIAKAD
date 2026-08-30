@@ -112,32 +112,45 @@
           </div>
           <div class="form-group">
             <label>Metode <span class="req">*</span></label>
-            <div class="pill-select-row">
+            <div class="pill-select-row" style="grid-template-columns:repeat(2,1fr);">
               <div class="pill-option-sm" :class="{ selected: form.metode === 'Tunai' }" @click="pilihMetode('Tunai')">
                 <span class="icon">💵</span><span class="name">Tunai</span>
               </div>
-              <div class="pill-option-sm" :class="{ selected: form.metode === 'Transfer Bank' }" @click="pilihMetode('Transfer Bank')">
-                <span class="icon">🏦</span><span class="name">Transfer Bank</span>
-              </div>
-              <div class="pill-option-sm" :class="{ selected: form.metode === 'E-Wallet' }" @click="pilihMetode('E-Wallet')">
-                <span class="icon">📱</span><span class="name">E-Wallet</span>
+              <div class="pill-option-sm" :class="{ selected: form.metode === 'Transfer' }" @click="pilihMetode('Transfer')">
+                <span class="icon">🔄</span><span class="name">Transfer</span>
               </div>
             </div>
           </div>
-          <div class="form-group" v-if="form.metode !== 'Tunai'">
-            <label>{{ form.metode === 'Transfer Bank' ? 'Pilih Bank' : 'Pilih E-Wallet' }} <span class="req">*</span></label>
-            <div class="chip-select">
-              <div
-                v-for="opt in opsiPenyedia"
-                :key="opt"
-                class="chip-option"
-                :class="{ selected: form.penyedia === opt }"
-                @click="pilihPenyedia(opt)"
-              >{{ opt }}</div>
-              <div class="chip-option" :class="{ selected: penyediaLainnya }" @click="pilihPenyediaLainnya">✏️ Lainnya</div>
+
+          <template v-if="form.metode === 'Transfer'">
+            <div class="form-group">
+              <label style="font-weight:800;">📤 Detail Pengirim</label>
+              <div class="pill-select-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:10px;">
+                <div class="pill-option-sm" :class="{ selected: pengirim.jenis === 'Bank' }" @click="pilihJenis(pengirim, 'Bank')"><span class="icon">🏦</span><span class="name">Bank</span></div>
+                <div class="pill-option-sm" :class="{ selected: pengirim.jenis === 'E-Wallet' }" @click="pilihJenis(pengirim, 'E-Wallet')"><span class="icon">📱</span><span class="name">E-Wallet</span></div>
+              </div>
+              <div class="chip-select" style="margin-bottom:10px;">
+                <div v-for="opt in opsiUntuk(pengirim.jenis)" :key="opt" class="chip-option" :class="{ selected: pengirim.penyedia === opt }" @click="pilihProvider(pengirim, opt)">{{ opt }}</div>
+                <div class="chip-option" :class="{ selected: pengirim.lainnya }" @click="pilihLainnya(pengirim)">✏️ Lainnya</div>
+              </div>
+              <input v-if="pengirim.lainnya" v-model="pengirim.penyedia" placeholder="Nama bank/e-wallet lain" style="margin-bottom:10px;" />
+              <input v-model="pengirim.atasNama" placeholder="Atas nama pengirim" />
             </div>
-            <input v-if="penyediaLainnya" v-model="form.penyedia" style="margin-top:8px;" placeholder="Ketik nama bank/e-wallet lain" />
-          </div>
+
+            <div class="form-group">
+              <label style="font-weight:800;">📥 Detail Penerima</label>
+              <div class="pill-select-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:10px;">
+                <div class="pill-option-sm" :class="{ selected: penerima.jenis === 'Bank' }" @click="pilihJenis(penerima, 'Bank')"><span class="icon">🏦</span><span class="name">Bank</span></div>
+                <div class="pill-option-sm" :class="{ selected: penerima.jenis === 'E-Wallet' }" @click="pilihJenis(penerima, 'E-Wallet')"><span class="icon">📱</span><span class="name">E-Wallet</span></div>
+              </div>
+              <div class="chip-select" style="margin-bottom:10px;">
+                <div v-for="opt in opsiUntuk(penerima.jenis)" :key="opt" class="chip-option" :class="{ selected: penerima.penyedia === opt }" @click="pilihProvider(penerima, opt)">{{ opt }}</div>
+                <div class="chip-option" :class="{ selected: penerima.lainnya }" @click="pilihLainnya(penerima)">✏️ Lainnya</div>
+              </div>
+              <input v-if="penerima.lainnya" v-model="penerima.penyedia" placeholder="Nama bank/e-wallet lain" style="margin-bottom:10px;" />
+              <input v-model="penerima.atasNama" placeholder="Atas nama penerima" />
+            </div>
+          </template>
           <div class="form-group" style="margin-bottom:0;">
             <label>Catatan</label>
             <textarea v-model="form.catatan" rows="2" placeholder="Opsional"></textarea>
@@ -158,6 +171,7 @@ import { useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import api from '../services/api';
 import { successDialog, errorDialog, pesanError } from '../composables/useDialog';
+import { identitasPonpes } from '../utils/identitasPonpes';
 
 const router = useRouter();
 
@@ -167,12 +181,13 @@ const search = ref('');
 const periode = ref('');
 const drawerOpen = ref(false);
 const tagihanBelumLunas = ref([]);
-const form = ref({ tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', penyedia: '', catatan: '' });
-const penyediaLainnya = ref(false);
+const form = ref({ tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', catatan: '' });
+const pengirim = ref({ jenis: 'Bank', penyedia: '', lainnya: false, atasNama: '' });
+const penerima = ref({ jenis: 'Bank', penyedia: '', lainnya: false, atasNama: identitasPonpes.nama });
 
 const daftarBank = ['BCA', 'BRI', 'BNI', 'Mandiri', 'BSI', 'CIMB Niaga'];
 const daftarEwallet = ['OVO', 'GoPay', 'DANA', 'ShopeePay', 'LinkAja'];
-const opsiPenyedia = computed(() => (form.value.metode === 'Transfer Bank' ? daftarBank : daftarEwallet));
+function opsiUntuk(jenis) { return jenis === 'Bank' ? daftarBank : daftarEwallet; }
 
 const tagihanTerpilih = computed(() => tagihanBelumLunas.value.find((t) => t.id === form.value.tagihanId) || null);
 const sisaTagihan = computed(() => (tagihanTerpilih.value ? Number(tagihanTerpilih.value.totalTagihan) - Number(tagihanTerpilih.value.totalTerbayar) : 0));
@@ -183,18 +198,22 @@ function onPilihTagihan() {
 
 function pilihMetode(m) {
   form.value.metode = m;
-  form.value.penyedia = '';
-  penyediaLainnya.value = false;
 }
 
-function pilihPenyedia(opt) {
-  form.value.penyedia = opt;
-  penyediaLainnya.value = false;
+function pilihJenis(sisi, jenis) {
+  sisi.jenis = jenis;
+  sisi.penyedia = '';
+  sisi.lainnya = false;
 }
 
-function pilihPenyediaLainnya() {
-  penyediaLainnya.value = true;
-  form.value.penyedia = '';
+function pilihProvider(sisi, opt) {
+  sisi.penyedia = opt;
+  sisi.lainnya = false;
+}
+
+function pilihLainnya(sisi) {
+  sisi.lainnya = true;
+  sisi.penyedia = '';
 }
 
 const warnaPalet = ['#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#6366f1', '#ef4444'];
@@ -202,15 +221,10 @@ function warnaAvatar(nama) { return warnaPalet[(nama || '').charCodeAt(0) % warn
 function inisial(nama) { return (nama || '?').trim().split(' ').slice(0, 2).map((x) => x[0]).join('').toUpperCase(); }
 function formatUang(n) { return Number(n || 0).toLocaleString('id-ID'); }
 function formatTanggal(d) { return d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'; }
-function ikonMetode(m) {
-  if (m === 'Tunai') return '💵';
-  if (m === 'Transfer Bank') return '🏦';
-  return '📱';
-}
+function ikonJenis(j) { return j === 'Bank' ? '🏦' : '📱'; }
 function labelMetode(p) {
-  const parts = [ikonMetode(p.metode), p.metode];
-  if (p.penyedia) parts.push(p.penyedia);
-  return parts.join(' ');
+  if (p.metode === 'Tunai') return '💵 Tunai';
+  return `${ikonJenis(p.jenisPengirim)} ${p.penyediaPengirim} → ${ikonJenis(p.jenisPenerima)} ${p.penyediaPenerima}`;
 }
 
 async function load() {
@@ -224,8 +238,9 @@ function reset() { search.value = ''; periode.value = ''; load(); }
 async function bukaCatat() {
   const res = await api.get('/tagihan');
   tagihanBelumLunas.value = res.data.filter((t) => t.status !== 'Lunas');
-  form.value = { tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', penyedia: '', catatan: '' };
-  penyediaLainnya.value = false;
+  form.value = { tagihanId: '', tanggalBayar: new Date().toISOString().slice(0, 10), jumlahBayar: 0, metode: 'Tunai', catatan: '' };
+  pengirim.value = { jenis: 'Bank', penyedia: '', lainnya: false, atasNama: '' };
+  penerima.value = { jenis: 'Bank', penyedia: '', lainnya: false, atasNama: identitasPonpes.nama };
   drawerOpen.value = true;
 }
 
@@ -233,11 +248,29 @@ async function simpanPembayaran() {
   if (!form.value.tagihanId || !form.value.jumlahBayar) {
     return errorDialog('Lengkapi tagihan & jumlah bayar terlebih dahulu.');
   }
-  if (form.value.metode !== 'Tunai' && !form.value.penyedia) {
-    return errorDialog(`${form.value.metode === 'Transfer Bank' ? 'Nama bank' : 'Nama e-wallet'} wajib diisi.`);
+  if (form.value.metode === 'Transfer') {
+    if (!pengirim.value.penyedia || !pengirim.value.atasNama) {
+      return errorDialog('Lengkapi detail pengirim (bank/e-wallet & atas nama).');
+    }
+    if (!penerima.value.penyedia) {
+      return errorDialog('Lengkapi detail penerima (bank/e-wallet).');
+    }
   }
   try {
-    const res = await api.post('/pembayaran', form.value);
+    const payload = {
+      ...form.value,
+      ...(form.value.metode === 'Transfer'
+        ? {
+            jenisPengirim: pengirim.value.jenis,
+            penyediaPengirim: pengirim.value.penyedia,
+            atasNamaPengirim: pengirim.value.atasNama,
+            jenisPenerima: penerima.value.jenis,
+            penyediaPenerima: penerima.value.penyedia,
+            atasNamaPenerima: penerima.value.atasNama,
+          }
+        : {}),
+    };
+    const res = await api.post('/pembayaran', payload);
     drawerOpen.value = false;
     await successDialog('Pembayaran berhasil dicatat.');
     router.push(`/pembayaran/${res.data.id}/kwitansi`);

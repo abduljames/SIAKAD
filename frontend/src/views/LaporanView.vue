@@ -69,10 +69,10 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>No</th><th>Santri</th><th>Kelas</th><th>No. Tagihan</th><th>Periode</th><th>Jatuh Tempo</th><th style="text-align:right;">Total Tagihan</th><th style="text-align:right;">Terbayar</th><th style="text-align:right;">Sisa</th><th>Status</th></tr>
+            <tr><th>No</th><th>Santri</th><th>Kelas</th><th>No. Tagihan</th><th>Jenis Tagihan</th><th>Periode</th><th>Jatuh Tempo</th><th style="text-align:right;">Total Tagihan</th><th style="text-align:right;">Terbayar</th><th style="text-align:right;">Sisa</th><th>Status</th></tr>
           </thead>
           <tbody>
-            <tr v-if="barisTerfilter.length === 0"><td colspan="10"><div class="empty-state"><div class="icon">📊</div>Tidak ada data yang cocok</div></td></tr>
+            <tr v-if="barisTerfilter.length === 0"><td colspan="11"><div class="empty-state"><div class="icon">📊</div>Tidak ada data yang cocok</div></td></tr>
             <tr v-for="b in barisTerfilter" :key="b.noTagihan">
               <td>{{ b.nis }}</td>
               <td class="person-cell">
@@ -81,6 +81,7 @@
               </td>
               <td>{{ b.kelas }}</td>
               <td>{{ b.noTagihan }}</td>
+              <td>{{ b.jenisTagihan }}</td>
               <td>{{ b.periode }}</td>
               <td>{{ formatTanggal(b.jatuhTempo) }}</td>
               <td style="text-align:right;">Rp {{ formatUang(b.totalTagihan) }}</td>

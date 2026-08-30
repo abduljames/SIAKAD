@@ -29,8 +29,7 @@
           <h3>👤 Informasi Santri</h3>
           <div style="font-size:16px;font-weight:800;">{{ tagihan.santri?.nama }}</div>
           <div style="font-size:12px;opacity:0.85;">NIS: {{ tagihan.santri?.nis }} &middot; Kelas {{ tagihan.santri?.kelas?.nama || '-' }}</div>
-          <div class="baris"><div><span class="label">Wali Santri</span>{{ tagihan.santri?.namaWali || '-' }}</div></div>
-          <div class="baris"><div><span class="label">No. HP Wali</span>{{ tagihan.santri?.noHpWali || '-' }}</div></div>
+          <div class="baris"><div><span class="label">Wali Santri</span>{{ tagihan.santri?.namaWali || '-' }} &middot; {{ tagihan.santri?.noHpWali || '-' }}</div></div>
         </div>
         <div class="doc-card">
           <h3>📋 Ringkasan Invoice</h3>
