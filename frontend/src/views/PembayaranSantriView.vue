@@ -223,8 +223,8 @@ function formatUang(n) { return Number(n || 0).toLocaleString('id-ID'); }
 function formatTanggal(d) { return d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'; }
 function ikonJenis(j) { return j === 'Bank' ? '🏦' : '📱'; }
 function labelMetode(p) {
-  if (p.metode === 'Tunai') return '💵 Tunai';
-  return `${ikonJenis(p.jenisPengirim)} ${p.penyediaPengirim} → ${ikonJenis(p.jenisPenerima)} ${p.penyediaPenerima}`;
+  if (p.metode !== 'Transfer' || !p.penyediaPenerima) return '💵 Tunai';
+  return `${ikonJenis(p.jenisPenerima)} ${p.penyediaPenerima}`;
 }
 
 async function load() {
