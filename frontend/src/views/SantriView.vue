@@ -158,7 +158,7 @@
           </div>
         </div>
         <div class="drawer-foot">
-          <button class="btn btn-outline" @click="drawerSantriOpen = false">Batal</button>
+          <button class="btn btn-danger" @click="drawerSantriOpen = false">Batal</button>
           <button class="btn btn-primary" @click="simpanSantri">Simpan</button>
         </div>
       </div>

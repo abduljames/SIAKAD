@@ -10,7 +10,7 @@
       <p>{{ dialogState.message }}</p>
       <div class="dialog-actions">
         <template v-if="dialogState.type === 'confirm'">
-          <button class="btn btn-outline" style="flex:1;" @click="closeDialog(false)">Batal</button>
+          <button class="btn btn-danger" style="flex:1;" @click="closeDialog(false)">Batal</button>
           <button class="btn btn-primary" style="flex:1;" @click="closeDialog(true)">Ya, Lanjutkan</button>
         </template>
         <template v-else>

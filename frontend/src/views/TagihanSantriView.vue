@@ -16,7 +16,7 @@
         <option value="Lunas">Lunas</option>
       </select>
       <button class="btn btn-outline" @click="reset">↻ Reset</button>
-      <RouterLink class="btn btn-outline" style="margin-left:auto;" to="/tagihan/buat-massal">👥 Buat Tagihan Massal</RouterLink>
+      <RouterLink class="btn btn-indigo" style="margin-left:auto;" to="/tagihan/buat-massal">👥 Buat Tagihan Massal</RouterLink>
       <RouterLink class="btn btn-primary" to="/tagihan/buat">+ Buat Tagihan Santri</RouterLink>
     </div>
 

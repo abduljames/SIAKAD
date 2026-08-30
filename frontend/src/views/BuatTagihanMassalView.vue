@@ -66,7 +66,7 @@
     </div>
 
     <div style="display:flex;gap:10px;justify-content:space-between;">
-      <RouterLink to="/tagihan" class="btn btn-outline">✕ Batal</RouterLink>
+      <RouterLink to="/tagihan" class="btn btn-danger">✕ Batal</RouterLink>
       <button class="btn btn-primary" @click="simpan">✓ Buat Tagihan untuk {{ terpilih.length }} Santri</button>
     </div>
   </AppLayout>

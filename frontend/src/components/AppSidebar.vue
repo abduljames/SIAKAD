@@ -6,6 +6,7 @@
         <div class="title">SIAKAD</div>
         <div class="subtitle">Sistem Akademik Pesantren</div>
       </div>
+      <button class="sidebar-toggle-btn" style="margin-left:auto;" @click="toggleSidebar" title="Sembunyikan menu">☰</button>
     </div>
 
     <div class="nav-group-label">Data Master</div>
@@ -22,5 +23,5 @@
 </template>
 
 <script setup>
-import { sidebarTerbuka } from '../composables/useSidebar';
+import { sidebarTerbuka, toggleSidebar } from '../composables/useSidebar';
 </script>

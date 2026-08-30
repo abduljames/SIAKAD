@@ -157,7 +157,7 @@
           </div>
         </div>
         <div class="drawer-foot">
-          <button class="btn btn-outline" @click="drawerOpen = false">Batal</button>
+          <button class="btn btn-danger" @click="drawerOpen = false">Batal</button>
           <button class="btn btn-primary" @click="simpanPembayaran">Simpan</button>
         </div>
       </div>

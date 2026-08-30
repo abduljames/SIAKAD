@@ -79,8 +79,8 @@ input:focus, select:focus, textarea:focus {
 .sidebar {
   width: 240px;
   flex-shrink: 0;
-  background: linear-gradient(180deg, var(--hijau-50) 0%, #ffffff 260px);
-  border-right: 1px solid var(--border);
+  background: linear-gradient(165deg, #f3faf5 0%, #eaf4ee 55%, #e6f1ea 100%);
+  border-right: 1px solid #dceade;
   display: flex;
   flex-direction: column;
   padding: 20px 14px;
@@ -233,10 +233,11 @@ input:focus, select:focus, textarea:focus {
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;
   padding: 9px 16px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 700;
-  border: 1px solid transparent; transition: filter 0.15s;
+  border: 1px solid transparent; transition: filter 0.15s; text-decoration: none;
 }
 .btn:hover { filter: brightness(0.96); }
 .btn-primary { background: var(--hijau-700); color: #fff; }
+.btn-indigo { background: var(--indigo-500); color: #fff; }
 .btn-outline { background: #fff; color: var(--teks); border-color: var(--border); }
 .btn-danger { background: var(--danger-bg); color: var(--danger); }
 .btn-ghost { background: transparent; color: var(--teks-sub); border-color: var(--border); }
