@@ -21,8 +21,10 @@
   --indigo-500: #6366f1;
   --indigo-100: #e0e7ff;
 
-  --bg: #f6f7f9;
+  --bg: #f5f5f4;
   --kartu: #ffffff;
+  --sidebar-teal: #137476;
+  --sidebar-teal-gelap: #0d5a5c;
   --border: #e5e7eb;
   --teks: #1f2937;
   --teks-sub: #6b7280;
@@ -79,8 +81,8 @@ input:focus, select:focus, textarea:focus {
 .sidebar {
   width: 240px;
   flex-shrink: 0;
-  background: linear-gradient(165deg, #f3faf5 0%, #eaf4ee 55%, #e6f1ea 100%);
-  border-right: 1px solid #dceade;
+  background: linear-gradient(165deg, var(--sidebar-teal) 0%, var(--sidebar-teal-gelap) 100%);
+  border-right: 1px solid var(--sidebar-teal-gelap);
   display: flex;
   flex-direction: column;
   padding: 20px 14px;
@@ -104,47 +106,46 @@ input:focus, select:focus, textarea:focus {
   gap: 10px;
   padding: 0 8px 20px;
   margin-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 .sidebar-brand .mark {
   width: 34px; height: 34px; border-radius: 10px;
-  background: linear-gradient(135deg, var(--hijau-600), var(--hijau-700));
+  background: #0a3335;
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-weight: 800; font-size: 15px;
 }
-.sidebar-brand .title { font-size: 15px; font-weight: 800; }
-.sidebar-brand .subtitle { font-size: 11px; color: var(--teks-sub); }
+.sidebar-brand .title { font-size: 15px; font-weight: 800; color: #fff; }
+.sidebar-brand .subtitle { font-size: 11px; color: rgba(255, 255, 255, 0.65); }
 
 .nav-group-label {
-  font-size: 10.5px; font-weight: 700; color: var(--teks-muted);
+  font-size: 10.5px; font-weight: 700; color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase; letter-spacing: 0.06em;
   padding: 14px 10px 6px;
 }
 .nav-link {
   display: flex; align-items: center; gap: 10px;
   padding: 8px 10px; border-radius: var(--radius-sm);
-  font-size: 13.5px; font-weight: 600; color: var(--teks-sub);
+  font-size: 13.5px; font-weight: 600; color: rgba(255, 255, 255, 0.8);
   text-decoration: none; margin-bottom: 3px;
   transition: background 0.12s ease, color 0.12s ease;
 }
-.nav-link:hover { background: #fff; color: var(--teks); box-shadow: var(--shadow); }
-.nav-link.active { background: var(--hijau-700); color: #fff; box-shadow: 0 2px 8px rgba(15, 92, 44, 0.25); }
+.nav-link:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.nav-link.active { background: rgba(255, 255, 255, 0.18); color: #fff; box-shadow: inset 3px 0 0 #fff; }
 .nav-link .icon {
   font-size: 14px; width: 26px; height: 26px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  border-radius: 8px; background: var(--bg);
+  border-radius: 8px; background: rgba(255, 255, 255, 0.12);
 }
-.nav-link.active .icon { background: rgba(255, 255, 255, 0.2); }
-.nav-link .icon.tone-biru { background: var(--biru-100); }
-.nav-link .icon.tone-oranye { background: var(--oranye-100); }
-.nav-link .icon.tone-hijau { background: var(--hijau-100); }
-.nav-link .icon.tone-teal { background: var(--teal-100); }
-.nav-link .icon.tone-ungu { background: var(--ungu-100); }
+.nav-link .icon.tone-biru { background: rgba(96, 165, 250, 0.4); }
+.nav-link .icon.tone-oranye { background: rgba(251, 191, 36, 0.35); }
+.nav-link .icon.tone-hijau { background: rgba(74, 222, 128, 0.3); }
+.nav-link .icon.tone-teal { background: rgba(255, 255, 255, 0.2); }
+.nav-link .icon.tone-ungu { background: rgba(196, 181, 253, 0.35); }
 .nav-link.active .icon.tone-biru,
 .nav-link.active .icon.tone-oranye,
 .nav-link.active .icon.tone-hijau,
 .nav-link.active .icon.tone-teal,
-.nav-link.active .icon.tone-ungu { background: rgba(255, 255, 255, 0.2); }
+.nav-link.active .icon.tone-ungu { background: rgba(255, 255, 255, 0.25); }
 
 .main-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
@@ -257,7 +258,7 @@ thead th {
 }
 tbody td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: #fafafa; }
+tbody tr:hover { background: var(--bg); }
 
 .row-icon-name { display: flex; align-items: center; gap: 11px; }
 .row-icon {
