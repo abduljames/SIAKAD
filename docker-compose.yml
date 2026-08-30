@@ -1,0 +1,18 @@
+# Postgres khusus SIAKAD -- container & port terpisah dari ProyekKoperasi
+# (yang pakai port 5434), supaya dua project ini benar-benar independen.
+services:
+  postgres:
+    image: postgres:15
+    container_name: siakad_postgres
+    environment:
+      POSTGRES_USER: siakad
+      POSTGRES_PASSWORD: siakad
+      POSTGRES_DB: db_siakad
+    ports:
+      - "5435:5432"
+    volumes:
+      - siakad_postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  siakad_postgres_data:
