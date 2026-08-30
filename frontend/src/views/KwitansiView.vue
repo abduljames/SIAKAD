@@ -20,7 +20,7 @@
           <div class="nomor-label">No. Kwitansi</div>
           <div class="nomor">{{ pembayaran.noPembayaran }}</div>
           <div class="row"><span>📅</span><span>{{ formatTanggal(pembayaran.tanggalBayar) }}</span></div>
-          <div class="row"><span>💳</span><span>{{ pembayaran.metode === 'Transfer' ? `${pembayaran.penyediaPengirim} → ${pembayaran.penyediaPenerima}` : 'Tunai' }}</span></div>
+          <div class="row"><span>💳</span><span>{{ pembayaran.metode === 'Transfer' ? pembayaran.penyediaPenerima : 'Tunai' }}</span></div>
         </div>
       </div>
 
@@ -77,20 +77,7 @@
       <div class="doc-card" style="margin-bottom:16px;">
         <h3>💳 Detail Pembayaran</h3>
         <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);"><span style="color:var(--teks-sub);">Metode Pembayaran</span><span>{{ pembayaran.metode }}</span></div>
-
-        <div v-if="pembayaran.metode === 'Transfer'" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-          <div class="summary-box">
-            <div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">📤 Pengirim</div>
-            <div class="row"><span class="label">{{ pembayaran.jenisPengirim === 'Bank' ? 'Bank' : 'E-Wallet' }}</span><span>{{ ikonJenis(pembayaran.jenisPengirim) }} {{ pembayaran.penyediaPengirim }}</span></div>
-            <div class="row"><span class="label">Atas Nama</span><span>{{ pembayaran.atasNamaPengirim }}</span></div>
-          </div>
-          <div class="summary-box">
-            <div style="font-weight:700;font-size:11.5px;margin-bottom:6px;">📥 Penerima</div>
-            <div class="row"><span class="label">{{ pembayaran.jenisPenerima === 'Bank' ? 'Bank' : 'E-Wallet' }}</span><span>{{ ikonJenis(pembayaran.jenisPenerima) }} {{ pembayaran.penyediaPenerima }}</span></div>
-            <div class="row"><span class="label">Atas Nama</span><span>{{ pembayaran.atasNamaPenerima }}</span></div>
-          </div>
-        </div>
-
+        <div v-if="pembayaran.metode === 'Transfer'" style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);"><span style="color:var(--teks-sub);">{{ pembayaran.jenisPenerima === 'Bank' ? 'Bank Penerima' : 'E-Wallet Penerima' }}</span><span>{{ ikonJenis(pembayaran.jenisPenerima) }} {{ pembayaran.penyediaPenerima }}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);" v-if="pembayaran.catatan"><span style="color:var(--teks-sub);">Catatan</span><span>{{ pembayaran.catatan }}</span></div>
         <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;"><span style="color:var(--teks-sub);">Tanggal Bayar</span><span>{{ formatTanggal(pembayaran.tanggalBayar) }}</span></div>
       </div>
