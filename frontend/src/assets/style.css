@@ -21,11 +21,12 @@
   --indigo-500: #6366f1;
   --indigo-100: #e0e7ff;
 
-  --bg: #eef6f6;
+  --bg: #bfe1e1;
   --kartu: #ffffff;
   --sidebar-teal: #137476;
   --sidebar-teal-gelap: #0d5a5c;
-  --topbar-bg: #e2eeee;
+  --topbar-bg: #bfe1e1;
+  --topbar-border: #a6d3d3;
   --border: #dbe8e8;
   --teks: #1f2937;
   --teks-sub: #6b7280;
@@ -146,7 +147,7 @@ input:focus, select:focus, textarea:focus {
 
 .topbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 28px; background: var(--topbar-bg); border-bottom: 1px solid var(--border);
+  padding: 16px 28px; background: var(--topbar-bg); border-bottom: 1px solid var(--topbar-border);
 }
 .topbar-left h1 { font-size: 20px; }
 .topbar-left .desc { font-size: 12.5px; color: var(--teks-sub); margin-top: 3px; }
