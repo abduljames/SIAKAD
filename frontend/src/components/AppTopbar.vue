@@ -1,8 +1,11 @@
 <template>
   <div class="topbar">
-    <div class="topbar-left">
-      <h1>{{ title }}</h1>
-      <div class="desc" v-if="desc">{{ desc }}</div>
+    <div class="topbar-left" style="display:flex;align-items:center;gap:14px;">
+      <button class="sidebar-toggle-btn" @click="toggleSidebar" title="Tampilkan/sembunyikan menu">☰</button>
+      <div>
+        <h1>{{ title }}</h1>
+        <div class="desc" v-if="desc">{{ desc }}</div>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="topbar-meta">
@@ -25,6 +28,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { toggleSidebar } from '../composables/useSidebar';
 
 defineProps({ title: String, desc: String });
 const router = useRouter();

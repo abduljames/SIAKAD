@@ -86,6 +86,9 @@ export class LaporanController {
     ];
     sheet.getRow(1).font = { bold: true };
     sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE0F2F1' } };
+    for (const key of ['totalTagihan', 'totalTerbayar', 'sisaTagihan']) {
+      sheet.getColumn(key).numFmt = '"Rp" #,##0';
+    }
     baris.forEach((row) => sheet.addRow({ ...row, menunggakLabel: row.menunggak ? 'Ya' : '-' }));
 
     const buffer = await workbook.xlsx.writeBuffer();

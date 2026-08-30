@@ -107,7 +107,7 @@
           </div>
           <div class="form-group">
             <label>Jumlah Bayar (Rp) <span class="req">*</span></label>
-            <input v-model.number="form.jumlahBayar" type="number" />
+            <CurrencyInput v-model="form.jumlahBayar" />
             <div v-if="tagihanTerpilih" class="form-hint">Sisa tagihan: Rp {{ formatUang(sisaTagihan) }}</div>
           </div>
           <div class="form-group">
@@ -169,6 +169,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
+import CurrencyInput from '../components/CurrencyInput.vue';
 import api from '../services/api';
 import { successDialog, errorDialog, pesanError } from '../composables/useDialog';
 import { identitasPonpes } from '../utils/identitasPonpes';

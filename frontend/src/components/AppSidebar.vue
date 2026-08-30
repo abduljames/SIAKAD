@@ -1,5 +1,5 @@
 <template>
-  <aside class="sidebar">
+  <aside class="sidebar" :class="{ collapsed: !sidebarTerbuka }">
     <div class="sidebar-brand">
       <div class="mark">S</div>
       <div>
@@ -20,3 +20,7 @@
     <RouterLink class="nav-link" active-class="active" to="/laporan"><span class="icon">📊</span> Rekap Tagihan</RouterLink>
   </aside>
 </template>
+
+<script setup>
+import { sidebarTerbuka } from '../composables/useSidebar';
+</script>
