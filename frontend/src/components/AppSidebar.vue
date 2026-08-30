@@ -1,7 +1,6 @@
 <template>
   <aside class="sidebar" :class="{ collapsed: !sidebarTerbuka }">
     <div class="sidebar-brand">
-      <div class="mark">S</div>
       <div>
         <div class="title">SIAKAD</div>
         <div class="subtitle">Sistem Akademik Pesantren</div>
