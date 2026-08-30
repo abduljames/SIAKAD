@@ -24,11 +24,10 @@
         </div>
       </div>
 
-      <div class="doc-banner">
-        <div class="check">✓</div>
-        <h2>Kwitansi Pembayaran</h2>
-        <span class="badge" :class="statusClass(pembayaran.tagihan?.status)" style="margin-bottom:10px;display:inline-flex;">{{ pembayaran.tagihan?.status }}</span>
-        <p class="desc">Terima kasih, pembayaran Anda telah tercatat.<br />Semoga menjadi amal jariyah.</p>
+      <div class="doc-banner-slim">
+        <span class="check-sm">✓</span>
+        <span class="teks"><strong>Kwitansi Pembayaran</strong> — terima kasih, pembayaran Anda telah tercatat.</span>
+        <span class="badge" :class="statusClass(pembayaran.tagihan?.status)">{{ pembayaran.tagihan?.status }}</span>
       </div>
 
       <div class="doc-grid-2">

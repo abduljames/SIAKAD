@@ -368,6 +368,17 @@ tbody tr:hover { background: #fafafa; }
 .doc-banner h2 { font-size: 19px; margin-bottom: 8px; }
 .doc-banner .desc { font-size: 12.5px; color: var(--teks-sub); }
 
+.doc-banner-slim {
+  display: flex; align-items: center; gap: 12px; background: var(--hijau-50); border: 1px solid var(--hijau-100);
+  border-radius: var(--radius); padding: 14px 20px; margin-bottom: 16px;
+}
+.doc-banner-slim .check-sm {
+  width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--hijau-100); color: var(--hijau-700);
+  font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+}
+.doc-banner-slim .teks { flex: 1; font-size: 12.5px; color: var(--teks-sub); }
+.doc-banner-slim .teks strong { color: var(--teks); }
+
 .doc-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; align-items: start; }
 .doc-santri-card { background: var(--hijau-700); color: #fff; border-radius: var(--radius); padding: 20px; }
 .doc-santri-card h3 { font-size: 13px; margin-bottom: 14px; opacity: 0.9; }
