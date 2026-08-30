@@ -7,7 +7,9 @@ const routes = [
   { path: '/jenis-tagihan', component: () => import('../views/JenisTagihanView.vue'), meta: { requiresAuth: true } },
   { path: '/tagihan', component: () => import('../views/TagihanSantriView.vue'), meta: { requiresAuth: true } },
   { path: '/tagihan/buat', component: () => import('../views/BuatTagihanView.vue'), meta: { requiresAuth: true } },
+  { path: '/tagihan/:id/invoice', component: () => import('../views/InvoiceView.vue'), meta: { requiresAuth: true } },
   { path: '/pembayaran', component: () => import('../views/PembayaranSantriView.vue'), meta: { requiresAuth: true } },
+  { path: '/pembayaran/:id/kwitansi', component: () => import('../views/KwitansiView.vue'), meta: { requiresAuth: true } },
   { path: '/laporan', component: () => import('../views/LaporanView.vue'), meta: { requiresAuth: true } },
 ];
 

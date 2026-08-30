@@ -23,10 +23,10 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>No</th><th>No. Tagihan</th><th>Santri</th><th>Kelas</th><th>Periode</th><th>Jatuh Tempo</th><th style="text-align:right;">Total Tagihan</th><th style="text-align:right;">Terbayar</th><th>Status</th></tr>
+            <tr><th>No</th><th>No. Tagihan</th><th>Santri</th><th>Kelas</th><th>Periode</th><th>Jatuh Tempo</th><th style="text-align:right;">Total Tagihan</th><th style="text-align:right;">Terbayar</th><th>Status</th><th style="text-align:right;">Aksi</th></tr>
           </thead>
           <tbody>
-            <tr v-if="list.length === 0"><td colspan="9"><div class="empty-state"><div class="icon">🧾</div>Belum ada tagihan dibuat</div></td></tr>
+            <tr v-if="list.length === 0"><td colspan="10"><div class="empty-state"><div class="icon">🧾</div>Belum ada tagihan dibuat</div></td></tr>
             <tr v-for="(t, idx) in list" :key="t.id">
               <td>{{ idx + 1 }}</td>
               <td>{{ t.noTagihan }}</td>
@@ -37,6 +37,7 @@
               <td style="text-align:right;">Rp {{ formatUang(t.totalTagihan) }}</td>
               <td style="text-align:right;">Rp {{ formatUang(t.totalTerbayar) }}</td>
               <td><span class="badge" :class="statusClass(t.status)">{{ t.status }}</span></td>
+              <td style="text-align:right;"><RouterLink class="btn btn-ghost btn-sm" :to="`/tagihan/${t.id}/invoice`">📄 Invoice</RouterLink></td>
             </tr>
           </tbody>
         </table>

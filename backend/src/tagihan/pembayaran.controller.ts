@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, ILike, Repository } from 'typeorm';
 import { Pembayaran } from './pembayaran.entity';
@@ -35,6 +35,13 @@ export class PembayaranController {
     const jumlahTunggakan = semuaTagihan.filter((x) => x.status !== 'Lunas').length;
 
     return { data, stats: { totalTagihan, totalTerbayar, totalBelumTerbayar, jumlahTunggakan } };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    const pembayaran = await this.pembayaranRepo.findOneBy({ id });
+    if (!pembayaran) throw new NotFoundException('Pembayaran tidak ditemukan.');
+    return pembayaran;
   }
 
   @Post()

@@ -50,10 +50,10 @@
       <div class="table-wrap">
         <table>
           <thead>
-            <tr><th>No</th><th>Tanggal Bayar</th><th>No. Pembayaran</th><th>Santri</th><th>Kelas</th><th>Periode</th><th style="text-align:right;">Jumlah Bayar</th><th>Metode</th><th>Status</th></tr>
+            <tr><th>No</th><th>Tanggal Bayar</th><th>No. Pembayaran</th><th>Santri</th><th>Kelas</th><th>Periode</th><th style="text-align:right;">Jumlah Bayar</th><th>Metode</th><th>Status</th><th style="text-align:right;">Aksi</th></tr>
           </thead>
           <tbody>
-            <tr v-if="list.length === 0"><td colspan="9"><div class="empty-state"><div class="icon">💳</div>Belum ada pembayaran tercatat</div></td></tr>
+            <tr v-if="list.length === 0"><td colspan="10"><div class="empty-state"><div class="icon">💳</div>Belum ada pembayaran tercatat</div></td></tr>
             <tr v-for="(p, idx) in list" :key="p.id">
               <td>{{ idx + 1 }}</td>
               <td>{{ formatTanggal(p.tanggalBayar) }}</td>
@@ -70,6 +70,7 @@
               <td style="text-align:right;">Rp {{ formatUang(p.jumlahBayar) }}</td>
               <td>{{ labelMetode(p) }}</td>
               <td><span class="badge badge-lunas">Lunas</span></td>
+              <td style="text-align:right;"><RouterLink class="btn btn-ghost btn-sm" :to="`/pembayaran/${p.id}/kwitansi`">🧾 Kwitansi</RouterLink></td>
             </tr>
           </tbody>
         </table>
@@ -143,9 +144,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import AppLayout from '../components/AppLayout.vue';
 import api from '../services/api';
 import { successDialog, errorDialog, pesanError } from '../composables/useDialog';
+
+const router = useRouter();
 
 const list = ref([]);
 const stats = ref({ totalTagihan: 0, totalTerbayar: 0, totalBelumTerbayar: 0, jumlahTunggakan: 0 });
@@ -201,10 +205,10 @@ async function simpanPembayaran() {
     return errorDialog(`${form.value.metode === 'Transfer Bank' ? 'Nama bank' : 'Nama e-wallet'} wajib diisi.`);
   }
   try {
-    await api.post('/pembayaran', form.value);
+    const res = await api.post('/pembayaran', form.value);
     drawerOpen.value = false;
-    load();
-    successDialog('Pembayaran berhasil dicatat.');
+    await successDialog('Pembayaran berhasil dicatat.');
+    router.push(`/pembayaran/${res.data.id}/kwitansi`);
   } catch (err) {
     errorDialog(pesanError(err));
   }

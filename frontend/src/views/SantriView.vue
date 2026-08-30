@@ -77,7 +77,11 @@
         <div class="modal-body">
           <div style="display:flex;gap:8px;margin-bottom:16px;">
             <input v-model="formKelas.nama" placeholder="Nama kelas, contoh: 7A" @keyup.enter="simpanKelas" />
-            <input v-model="formKelas.tingkat" placeholder="Tingkat (opsional)" style="max-width:140px;" @keyup.enter="simpanKelas" />
+            <select v-model="formKelas.tingkat" style="max-width:110px;">
+              <option value="">Tingkat</option>
+              <option value="MTS">MTS</option>
+              <option value="MA">MA</option>
+            </select>
             <button class="btn btn-primary btn-sm" @click="simpanKelas">{{ editingKelas ? 'Update' : '+ Tambah' }}</button>
           </div>
           <div v-if="editingKelas" style="margin-bottom:10px;">
