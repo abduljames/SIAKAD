@@ -1,0 +1,61 @@
+# Compose khusus PRODUCTION untuk SIAKAD -- dijalankan berdampingan dengan
+# stack Koperasi di VPS yang sama. Butuh file ".env" di folder yang sama isi
+# DB_USERNAME, DB_PASSWORD, DB_DATABASE, JWT_SECRET (lihat backend/.env.example).
+#
+# TIDAK ada service "frontend" di sini -- SIAKAD tidak punya nginx/port sendiri.
+# Frontend SIAKAD (hasil `npm run build`) disajikan lewat nginx milik Koperasi
+# yang sudah pegang port 80/443, lewat volume mount + server block tambahan
+# untuk subdomain siakad.* (lihat FrontEnd/nginx.conf & docker-compose.prod.yml
+# di project Koperasi). Makanya backend di sini WAJIB nyambung ke network
+# "koperasi_internal" juga, supaya nginx Koperasi bisa proxy_pass ke sini.
+services:
+  postgres:
+    image: postgres:15
+    container_name: siakad_postgres_prod
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - internal
+
+  backend:
+    build: ./backend
+    container_name: siakad_backend_prod
+    environment:
+      NODE_ENV: production
+      # Sekali pakai buat bootstrap skema database yang masih kosong (belum
+      # ada migration di project ini). Setelah tabel-tabel kebuat dan dicek
+      # aman, boleh dihapus baris ini lalu redeploy supaya synchronize balik
+      # mati seperti production semestinya.
+      DB_SYNCHRONIZE: 'true'
+      PORT: 3001
+      # Pakai container_name eksplisit, BUKAN alias service "postgres" --
+      # backend ini nyambung ke network "koperasi_internal" juga, dan project
+      # Koperasi KEBETULAN punya service bernama "postgres" juga di situ, jadi
+      # alias generik "postgres" bisa nyasar ke Postgres Koperasi.
+      DB_HOST: siakad_postgres_prod
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      JWT_SECRET: ${JWT_SECRET}
+    # Sengaja tidak ada port host -- cuma boleh diakses lewat nginx Koperasi
+    # lewat network "koperasi_internal", bukan langsung dari luar.
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - internal
+      - koperasi_internal
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+  koperasi_internal:
+    external: true
